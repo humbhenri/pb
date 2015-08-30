@@ -2,5 +2,5 @@
 
 (defpackage #:pb
   (:use #:cl)
-  (:export :pb))
+  (:export :progress-bar :pb-inc :pb-finish))
 

@@ -2,17 +2,31 @@
 
 (in-package #:pb)
 
-(defparameter *width* 10)
+(defclass progress-bar ()
+  ((count
+    :initarg :count
+    :initform 1
+    :reader pb-count)
+   (total
+    :initarg :total
+    :initform (error "Must inform a total value")
+    :reader pb-total)
+   (width
+    :initarg :width
+    :initform 10
+    :reader width)))
 
-(defun pb (count total)
-  (format t "~D / ~D [" count total)
-  (let* ((n (floor (/ (* *width* count) total)))
-        (blanks (- *width* n)))
+(defmethod pb-inc ((pb progress-bar))
+  (format t "~D / ~D [" (pb-count pb) (pb-total pb))
+  (let* ((n (floor (/ (* (width pb) (pb-count pb)) (pb-total pb))))
+         (blanks (- (width pb) n)))
     (loop repeat n do
-      (write-string "="))
+         (write-string "="))
     (loop repeat blanks do
-      (write-string " ")))
+         (write-string " ")))
   (format t "]~C" #\return)
   (finish-output nil)
-  nil)
+  (incf (slot-value pb 'count)))
 
+(defmethod pb-finish ((pb progress-bar))
+  (format t "Finished~%"))
